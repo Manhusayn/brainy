@@ -1,3 +1,28 @@
+// Add these lines at the TOP of your existing popup.js
+const insertBtn = document.getElementById('insertBtn');
+const loader = document.querySelector('.loader');
+const statusMessage = document.getElementById('statusMessage');
+
+const showLoading = () => {
+  insertBtn.disabled = true;
+  loader.style.display = 'block';
+  insertBtn.querySelector('span').textContent = 'Inserting...';
+};
+
+const hideLoading = () => {
+  insertBtn.disabled = false;
+  loader.style.display = 'none';
+  insertBtn.querySelector('span').textContent = 'Insert Template';
+};
+
+const showStatus = (message, duration = 2000) => {
+  statusMessage.textContent = message;
+  statusMessage.style.display = 'block';
+  setTimeout(() => {
+    statusMessage.style.display = 'none';
+  }, duration);
+};
+
 const templates = {
   research: `Give a quick overview of [TOPIC] by following this structure (be concise):
 
