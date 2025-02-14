@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Universal Research Assistant",
+  "name": "Brainy",
   "version": "2024.1",
   "description": "Guaranteed template insertion on ChatGPT/Claude/Perplexity/DeepSeek",
   "permissions": ["activeTab", "scripting"],
