@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Brainy",
-  "version": "Version 1.02",
+  "version": "Version 1.03",
   "description": "Welcome!\n\nBrainy is a chrome extension, that is created for intellectual minds and for those who wishes enhance their experience of learning with AI apps like Chatgpt, Claude AI, Perplexity & DeepSeek.\n\nMade with ❤\uFE0F in \uD83C\uDDEE\uD83C\uDDF3",
   "permissions": ["activeTab", "scripting"],
   "host_permissions": [
@@ -15,13 +15,13 @@
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
+      "48": "icons/icon28.png",
       "128": "icons/icon128.png"
     }
   },
   "icons": {
     "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
+    "48": "icons/icon28.png",
     "128": "icons/icon128.png"
   }
 }
