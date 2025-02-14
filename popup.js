@@ -1,122 +1,118 @@
-// Add these lines at the TOP of your existing popup.js
+const templates = {
+  research: `Get a quick overview of [TOPIC] by following this structure (be concise):
+
+1. Foundational Knowledge
+- What are the core principles/historical roots of [TOPIC]?
+- Key terminology, influential figures, pivotal moments
+- Why does this matter? What problem does it solve?
+
+2. Key Components & Systems
+- Critical parts (tools, processes, theories, stakeholders)
+- How do these parts interact? Hierarchy/ecosystem?
+
+3. Practical Applications
+- Real-world/niche use cases
+- Required skills/tools/resources
+
+4. Cultural/Social Impact
+- Societal influence and ethical debates
+- Controversies and myths
+
+5. Experts' Insights
+- What professionals wish beginners knew
+- Common misconceptions
+
+6. Future Trends
+- Emerging innovations and unanswered questions
+
+7. Comparative Analysis
+- Differences across cultures/industries/time
+- Simplifying analogies
+
+8. Starter Resources
+- Essential books/tools/communities`
+};
+
 const insertBtn = document.getElementById('insertBtn');
 const loader = document.querySelector('.loader');
 const statusMessage = document.getElementById('statusMessage');
 
-const showLoading = () => {
+document.getElementById('insertBtn').addEventListener('click', async () => {
   insertBtn.disabled = true;
   loader.style.display = 'block';
   insertBtn.querySelector('span').textContent = 'Inserting...';
-};
+  statusMessage.style.display = 'none';
 
-const hideLoading = () => {
-  insertBtn.disabled = false;
-  loader.style.display = 'none';
-  insertBtn.querySelector('span').textContent = 'Insert Template';
-};
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const topic = prompt('Enter your research topic:');
 
-const showStatus = (message, duration = 2000) => {
-  statusMessage.textContent = message;
-  statusMessage.style.display = 'block';
-  setTimeout(() => {
-    statusMessage.style.display = 'none';
-  }, duration);
-};
+    if (!topic) {
+      statusMessage.textContent = '🚫 Cancelled by user';
+      statusMessage.style.color = '#6b7280';
+      statusMessage.style.display = 'block';
+      return;
+    }
 
-const templates = {
-  research: `Give a quick overview of [TOPIC] by following this structure (be concise):
+    const template = templates.research.replace(/\[TOPIC\]/g, topic);
 
-1. FOUNDATIONAL KNOWLEDGE
-- What are the core principles/historical roots of [TOPIC]?
-- Key terminology, influential figures, and pivotal moments
-- Why does this matter? What problem does it solve or curiosity does it fulfill?
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: (templateText) => {
+        const selectors = [
+          '#prompt-textarea',
+          '.ProseMirror',
+          'textarea[placeholder="Ask anything..."]',
+          '.chat-input textarea',
+          'textarea',
+          '[contenteditable="true"]'
+        ];
 
-2. KEY COMPONENTS & SYSTEMS
-- Break [TOPIC] into its critical parts (tools, processes, theories, stakeholders)
-- How do these parts interact? What's the hierarchy/ecosystem?
+        const inputField = selectors.reduce((found, selector) =>
+          found || document.querySelector(selector), null);
 
-3. PRACTICAL APPLICATIONS
-- How is [TOPIC] used in the real world? Share surprising/niche use cases
-- What skills, tools, or resources are needed to engage with it?
-
-4. CULTURAL/SOCIAL IMPACT
-- How has [TOPIC] shaped societies, behaviors, or beliefs?
-- Controversies, myths, or ethical debates surrounding it
-
-5. EXPERTS' SECRETS
-- What do seasoned practitioners wish beginners knew?
-- Common misconceptions or overlooked nuances
-
-6. FUTURE TRENDS
-- Emerging innovations, predicted shifts, or unresolved questions in [TOPIC]
-
-7. COMPARATIVE LENS
-- How does [TOPIC] differ across cultures, industries, or time periods?
-- Analogies to simplify complex aspects (e.g., "X is like Y because...")
-
-8. STARTER TOOLKIT
-- Recommend 1-2 essential books/documentaries/podcasts/tools
-- Forums/communities where experts gather`
-};
-
-document.getElementById('insertBtn').addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-  // Get topic
-  const topic = prompt('Enter your research topic:');
-  if (!topic) return;
-
-  // Generate template
-  const template = templates.research.replace(/\[TOPIC\]/g, topic);
-
-  // Universal insertion
-  await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: (templateText) => {
-      // Current 2024 Selectors
-      const selectors = [
-        // ChatGPT
-        '#prompt-textarea',
-        // Claude
-        '.ProseMirror',
-        // Perplexity
-        'textarea[placeholder="Ask anything..."]',
-        // DeepSeek
-        '.chat-input textarea',
-        // Fallbacks
-        'textarea',
-        '[contenteditable="true"]'
-      ];
-
-      const inputField = selectors.reduce((found, selector) =>
-        found || document.querySelector(selector), null);
-
-      if (!inputField) {
-        alert('First click in the chat input field!');
-        return;
-      }
-
-      // Universal insertion method
-      const insertText = (text) => {
-        if (inputField.tagName === 'TEXTAREA') {
-          inputField.value = text;
-        } else {
-          inputField.textContent = text;
+        if (!inputField) {
+          alert('❗ First click in the chat input field!');
+          return;
         }
 
-        // Trigger all necessary events
-        ['input', 'change', 'keydown', 'keyup'].forEach(eventType => {
-          inputField.dispatchEvent(new Event(eventType, { bubbles: true }));
-        });
-      };
+        const insertText = (text) => {
+          if (inputField.tagName === 'TEXTAREA') {
+            inputField.value = text;
+          } else {
+            inputField.textContent = text;
+          }
 
-      // Execute
-      inputField.focus();
-      setTimeout(() => {
-        insertText(templateText);
-        inputField.scrollIntoView();
-      }, 100);
-    },
-    args: [template]
-  });
+          ['input', 'change', 'keydown', 'keyup'].forEach(eventType => {
+            inputField.dispatchEvent(new Event(eventType, { bubbles: true }));
+          });
+        };
+
+        inputField.focus();
+        setTimeout(() => {
+          insertText(templateText);
+          inputField.scrollIntoView();
+        }, 100);
+      },
+      args: [template]
+    });
+
+    statusMessage.textContent = '✅ Template inserted successfully!';
+    statusMessage.style.color = '#10a37f';
+    statusMessage.style.display = 'block';
+
+  } catch (error) {
+    console.error('Extension Error:', error);
+    statusMessage.textContent = '❌ Failed to insert template';
+    statusMessage.style.color = '#ef4444';
+    statusMessage.style.display = 'block';
+
+  } finally {
+    insertBtn.disabled = false;
+    loader.style.display = 'none';
+    insertBtn.querySelector('span').textContent = 'Insert Template';
+    setTimeout(() => {
+      statusMessage.style.display = 'none';
+    }, 3000);
+  }
 });
