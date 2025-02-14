@@ -3,25 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    body {
-      width: 280px;
-      padding: 15px;
-      font-family: system-ui, sans-serif;
+    :root {
+      --primary: #10a37f;
+      --primary-hover: #0d8266;
+      --background: #ffffff;
+      --text: #374151;
     }
-    button {
+
+    body {
+      width: 320px;
+      padding: 20px;
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--background);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .header h1 {
+      color: var(--primary);
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .header p {
+      color: #6b7280;
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+    }
+
+    #insertBtn {
       width: 100%;
-      padding: 12px;
-      background: #10a37f;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--primary), #0d9488);
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    #insertBtn:hover {
+      background: linear-gradient(135deg, var(--primary-hover), #0e766f);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 163, 127, 0.2);
+    }
+
+    #insertBtn:active {
+      transform: translateY(0);
+    }
+
+    .loader {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #fff;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+
+    .status-message {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--primary);
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <button id="insertBtn">Insert Research Template</button>
+  <div class="header">
+    <h1>Research Assistant</h1>
+    <p>Smart template for thorough analysis</p>
+  </div>
+
+  <button id="insertBtn">
+    <div class="loader"></div>
+    <span>Insert Template</span>
+  </button>
+
+  <div class="status-message" id="statusMessage"></div>
+
   <script src="popup.js"></script>
 </body>
 </html>
