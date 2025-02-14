@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Brainy",
-  "version": "2024.1",
-  "description": "Guaranteed template insertion on ChatGPT/Claude/Perplexity/DeepSeek",
+  "version": "Version 1.02",
+  "description": "Welcome!\n\nBrainy is a chrome extension, that is created for intellectual minds and for those who wishes enhance their experience of learning with AI apps like Chatgpt, Claude AI, Perplexity & DeepSeek.\n\nMade with ❤\uFE0F in \uD83C\uDDEE\uD83C\uDDF3",
   "permissions": ["activeTab", "scripting"],
   "host_permissions": [
     "*://chat.openai.com/*",
